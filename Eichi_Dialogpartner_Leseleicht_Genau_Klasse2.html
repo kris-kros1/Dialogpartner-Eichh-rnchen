@@ -1,0 +1,172 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Frag Eichi!</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Trebuchet MS",Arial,sans-serif;color:#3b2b1e;background:linear-gradient(#bde8f4 0 16%,#e5f1ca 46%,#b7dc7f);min-height:100vh}.app{max-width:1000px;margin:auto;padding:15px}.wood{background:linear-gradient(90deg,#d4a36a,#efcd95,#d5a46b);border:3px solid #936139;border-radius:17px;text-align:center;padding:11px;box-shadow:0 5px 13px #0002}h1{font-size:clamp(40px,6vw,61px);margin:0}.sub{font-size:20px}.intro{display:grid;grid-template-columns:110px 1fr;gap:15px;align-items:center;background:#fffdf7;border-radius:24px;padding:15px;margin:14px 0;box-shadow:0 6px 18px #0002}.sq{font-size:85px;text-align:center}.bubble{background:#edf7df;border:3px solid #80b45a;border-radius:21px;padding:15px;font-size:20px;line-height:1.42}.topics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:13px}.topic{border:0;border-radius:15px;padding:10px 5px;font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 3px 7px #0002}.topic span{display:block;font-size:29px}.topic:nth-child(8n+1){background:#8fd174}.topic:nth-child(8n+2){background:#f4b25b}.topic:nth-child(8n+3){background:#ef8377}.topic:nth-child(8n+4){background:#7bc9ed}.topic:nth-child(8n+5){background:#f2d16a}.topic:nth-child(8n+6){background:#bca1e4}.topic:nth-child(8n+7){background:#f1a9c2}.topic:nth-child(8n){background:#b7ded1}.chat{background:#fff;border-radius:24px;padding:15px;box-shadow:0 7px 20px #0002}.messages{height:450px;overflow:auto;background:#fbfaf3;border:2px solid #ded5c2;border-radius:18px;padding:14px}.msg{max-width:88%;padding:11px 14px;border-radius:18px;margin:9px 0;font-size:22px;line-height:1.5}.bot{background:#e0f2d3;border-bottom-left-radius:5px}.user{background:#dceefa;margin-left:auto;border-bottom-right-radius:5px}.who{font-size:12px;font-weight:bold;opacity:.65;margin-bottom:3px}.quick{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.quick button{border:2px solid #d1b77e;background:#fff7e5;border-radius:18px;padding:8px 11px;font-weight:bold;cursor:pointer}.row{display:flex;gap:8px}.row input{flex:1;border:3px solid #baa98c;border-radius:15px;padding:13px;font-size:18px}.send{border:0;border-radius:15px;background:#69aa4c;color:#fff;font-size:18px;font-weight:bold;padding:10px 18px;cursor:pointer}.note{text-align:center;color:#6c5e4e;font-size:14px;margin-top:9px}@media(max-width:650px){.intro{grid-template-columns:75px 1fr}.sq{font-size:60px}.topics{grid-template-columns:repeat(2,1fr)}.messages{height:390px}.msg{max-width:95%}}
+</style></head><body><main class="app">
+<header class="wood"><h1>🐿️ Frag Eichi!</h1><div class="sub">Sprich mit einem Eichhörnchen</div></header>
+<section class="intro"><div class="sq">🐿️</div><div class="bubble"><b>Hi, ich bin Eichi!</b> 🐿️<br>Du darfst <b>kurz</b> schreiben.<br>Ein Wort reicht oft! 🌰</div></section>
+<div class="topics" id="topics"></div><section class="chat"><div class="messages" id="messages"></div><div class="quick" id="quick"></div><div class="row"><input id="input" autocomplete="off" placeholder="Schreib kurz …"><button class="send" onclick="send()">Senden ➜</button></div><div class="note">💡 Ein Wort reicht: „Winter“, „Nuss“, „Babys“, „Nase“ …</div></section></main>
+<script>
+const D={
+food:{i:"🌰",n:"Futter",keys:["fress","friss","ess","hunger","futter","nahrung","nuss","eichel","beere","pilz","samen"],a:[
+"Wenn ich Hunger habe, suche ich mir Futter. 🌰 Ich mag zum Beispiel Nüsse, Samen, Eicheln, Beeren, Knospen und Pilze. Aber Eichhörnchen fressen nicht nur Nüsse.",
+"Ich esse nicht nur Nüsse. 🌰 Auch Samen, Beeren und Pilze schmecken mir.",
+"Ja, Nüsse mag ich – aber mein Speiseplan ist viel größer! 🌰 Besonders praktisch sind meine kräftigen Nagezähne zum Knabbern und Knacken."
+],q:["Was würdest du einem Eichhörnchen lieber anbieten: eine Eichel oder ein Bonbon?","Welche Nahrung von meinem Speiseplan kennst du selbst?"]},
+toilet:{i:"💩",n:"Kaka & Pipi",keys:["kaka","kack","kot","scheiss","scheiß","poop","pups","pipi","pink","urin","toilette","klo"],a:[
+"Ja. 😄 Ich mache <b>Kaka und Pipi</b> – draußen.",
+"Mein Körper verdaut Futter. 💩 Was er nicht braucht, kommt wieder raus.",
+"Auch ich muss Kaka und Pipi machen. 🐿️ Ein Klo brauche ich nicht."
+],q:["Warum müssen Tiere überhaupt Kot ausscheiden?"]},
+home:{i:"🏠",n:"Wohnen",keys:["wohn","zuhause","haus","nest","kobel","schlaf","bett","wald","park","garten","baum"],a:[
+"Mein Zuhause ist hoch oben im Baum. 🌳 Mein Nest heißt <b>Kobel</b>. Dort kann ich schlafen und mich schützen.",
+"Ich brauche kein Haus mit Tür und Fenster. 😄 Eichhörnchen bauen einen Kobel hoch im Baum. Wälder, Parks und Gärten mit hohen Bäumen sind gute Lebensräume.",
+"Zum Schlafen ziehe ich mich in meinen Kobel zurück. 🏠 Er ist ein geschützter Platz hoch im Baum."
+],q:["Wie heißt mein Nest noch einmal?","Warum ist ein Platz hoch im Baum für mich praktisch?"]},
+winter:{i:"❄️",n:"Winter",keys:["winter","schnee","kalt","frier","winterschlaf","winterruh","vorrat","versteck"],a:[
+"Im Winter schlafe ich viel, aber nicht die ganze Zeit. ❄️ Eichhörnchen halten <b>Winterruhe</b>. Wenn ich Hunger bekomme, kann ich aufwachen und meine Vorräte suchen.",
+"Mir hilft im Winter mein dichtes Fell, und mein buschiger Schwanz kann zusätzlich wärmen. 🐿️ Außerdem habe ich vorher Futter versteckt.",
+"Nein, ich halte keinen durchgehenden Winterschlaf. Ich wache zwischendurch auf. Dann wird es Zeit, nach einem meiner Futterverstecke zu suchen. 🌰"
+],q:["Was ist der Unterschied zwischen Winterruhe und Durchschlafen?","Warum verstecke ich schon im Herbst Futter?"]},
+body:{i:"🐾",n:"Körper",keys:["schwanz","zahn","zahne","fell","kralle","ohr","pinsel","pfote","korper","gross","klein","lang","kletter","spring"],a:[
+"Mein buschiger Schwanz kann ganz schön viel! 🐿️ Er hilft mir beim Steuern und Balancieren und kann mich auch wärmen.",
+"Meine scharfen Krallen helfen mir, mich beim Klettern festzuhalten. 🐾 Das ist praktisch, wenn ich an Baumstämmen und Ästen unterwegs bin.",
+"Meine Nagezähne wachsen immer wieder nach. 🦷 Das ist wichtig, weil ich viel nage und knacke.",
+"Ein erwachsenes Eichhörnchen ist ungefähr 25 bis 30 Zentimeter lang – und dann kommt noch der lange, buschige Schwanz dazu."
+],q:["Wozu könnte mein Schwanz beim Springen nützlich sein?","Was hilft mir dabei, an einem Baum festzuhalten?"]},
+babies:{i:"🐣",n:"Babys",keys:["baby","babys","junge","jungtier","mama","mutter","milch","geburt","blind","taub","nackt"],a:[
+"Eichhörnchen-Babys sind winzig. 🐣 Bei der Geburt sind sie nackt, blind und taub und wiegen ungefähr 10 Gramm.",
+"Meine Jungen brauchen zuerst ganz viel Hilfe von ihrer Mutter. Sie bekommen Milch und bleiben geschützt im Kobel.",
+"Mit etwa <b>3 bis 4 Monaten</b> sind die Jungen selbstständig. 🐿️"
+],q:["Warum können ganz junge Eichhörnchen noch nicht allein leben?"]},
+danger:{i:"🦉",n:"Gefahren",keys:["feind","gefahr","angst","tot","fressfeind","marder","wiesel","luchs","habicht","uhu","falke","katze"],a:[
+"Ich muss draußen aufmerksam sein. 🦉 Baummarder, Wiesel und manche Greifvögel können für Eichhörnchen gefährlich werden.",
+"Wenn Gefahr droht, sind Bäume sehr wichtig. 🌳 Dort kann ich schnell klettern und versuchen, mich zu verstecken.",
+"Auch Hauskatzen können Eichhörnchen gefährlich werden. Und wenn Menschen Lebensräume verändern, gibt es manchmal weniger Futter und weniger gute Plätze für Kobel."
+],q:["Warum helfen mir hohe Bäume bei Gefahr?"]},
+
+family:{i:"🐿️",n:"Familie",keys:["familie","hornchen","hörnchen","streifenhornchen","murmeltier","gleithornchen","saugetier","nagetier"],a:[
+"Ich gehöre zur <b>Familie der Hörnchen</b>. 🐿️ Auch Murmeltiere gehören dazu.",
+"Es gibt viele Hörnchen-Arten. 🌍 Dazu gehören auch Streifenhörnchen und Murmeltiere.",
+"Ich bin ein <b>Säugetier</b> und ein Nagetier. 🐿️"
+],q:["Kennst du noch ein anderes Hörnchen?"]},
+behavior:{i:"☀️",n:"Verhalten",keys:["tagaktiv","tag","nacht","allein","einzelganger","einzelgänger","laut","ruf","tschuk","regen","sturm","wetter"],a:[
+"Ich bin <b>tagsüber wach</b>. ☀️ Dann suche ich Futter.",
+"Meist lebe ich <b>allein</b>. 🐿️ Bei großer Kälte können mehrere Tiere zusammen sein.",
+"Bei starkem Regen oder Sturm bleibe ich länger im Kobel. 🌧️",
+"Ich verständige mich mit Lauten und Bewegungen. 🐿️"
+],q:["Bin ich eher am Tag oder in der Nacht wach?"]},
+name:{i:"🔤",n:"Name",keys:["name","heisst","heißt","eichhornchen","eichhörnchen","eichkater","eichhorn","kattker"],a:[
+"Mein Name kommt nicht einfach von der <b>Eichel</b>. 🔤 Er hat eine ältere Wortgeschichte.",
+"Eichhörnchen haben in manchen Gegenden andere Namen. 🐿️ Zum Beispiel <b>Eichkater</b>."
+],q:[]},
+nut:{i:"🥜",n:"Nuss knacken",keys:["knack","nuss","schale","nagezahn","nussknacken"],a:[
+"Ich knacke Nüsse mit meinen <b>Nagezähnen</b>. 🥜",
+"Erst nage ich ein Loch in die Schale. Dann öffne ich die Nuss weiter. 🦷",
+"Meine kräftigen Nagezähne helfen mir beim Nüsseknacken. 🌰"
+],q:["Womit knacke ich eine Nuss?"]},
+senses:{i:"👃",n:"Sinne",keys:["riech","geruch","nase","seh","auge","hor","hör","ohr","bart","sinne","finden"],a:[
+"Meine <b>Nase</b> ist sehr gut. 👃 So finde ich sogar verstecktes Futter.",
+"Ich kann gut sehen und hören. 👀👂 Das hilft mir bei Gefahr.",
+"Meine Barthaare helfen mir bei der Orientierung. 🐿️"
+],q:["Welcher Sinn hilft mir beim Finden von Futter?"]},
+year:{i:"🍂",n:"Jahreslauf",keys:["fruhling","frühling","sommer","herbst","jahr","jahreszeit","paarung","vorrate","vorräte","winterfell"],a:[
+"Im <b>Frühling</b> ist Paarungszeit. 🌱 Nach etwa <b>38 Tagen</b> kommen meist <b>2 bis 5 Junge</b> zur Welt.",
+"Im <b>Sommer</b> werden die Jungen aufgezogen. ☀️ Manchmal gibt es einen zweiten Wurf.",
+"Im <b>Herbst</b> sammle ich Vorräte. 🍂 Ich bekomme Winterfell und polstere meinen Kobel.",
+"Im <b>Winter</b> halte ich Winterruhe. ❄️"
+],q:["Was mache ich im Herbst?"]},
+drink:{i:"💧",n:"Trinken",keys:["trink","durst","wasser","pfütze","bach","teich"],a:[
+"Wenn ich Durst habe, trinke ich Wasser. 💧 Eichhörnchen können zum Beispiel an Pfützen, kleinen Bächen oder Teichen trinken.",
+"Auch Eichhörnchen brauchen Wasser. 🐿️ Draußen finde ich es zum Beispiel in kleinen Gewässern oder Pfützen."
+],q:["Wo könnte ein Eichhörnchen draußen Wasser finden?"]}
+};
+let last=null,count=0;
+function norm(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ß/g,"ss").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim()}
+function lev(a,b){let d=Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));for(let i=0;i<=a.length;i++)d[i][0]=i;for(let j=0;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]}
+function sim(a,b){if(a.includes(b)||b.includes(a))return true;if(a.length<4||b.length<4)return false;return lev(a,b)<=Math.max(1,Math.floor(Math.max(a.length,b.length)/4))}
+function detect(s){let ws=norm(s).split(" "),best=null,score=0;for(let k in D){let sc=0;for(let x of ws)for(let y of D[k].keys)if(sim(x,norm(y))){sc+=x===norm(y)?4:2;break}if(sc>score){score=sc;best=k}}return score>=2?best:null}
+function add(t,c="bot"){let d=document.createElement("div");d.className="msg "+c;d.innerHTML='<div class="who">'+(c==="bot"?"🐿️ Eichi":"Du")+"</div>"+t;messages.appendChild(d);messages.scrollTop=messages.scrollHeight}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function shouldAsk(){count++;return count%5===0}
+function reply(k){last=k;let t=pick(D[k].a);if(shouldAsk()&&D[k].q.length)t+="<br><br><b>"+pick(D[k].q)+"</b>";add(t);buttons(k)}
+function buttons(k){quick.innerHTML=(k?'<button onclick="more(\''+k+'\')">🌰 Erzähl mehr</button>':'')+'<button onclick="question()">🧠 Frag mich etwas</button><button onclick="topics()">🌳 Themen</button>'}
+function more(k){reply(k)}
+function question(){let ks=Object.keys(D),k=pick(ks);last=k;add("<b>"+pick(D[k].q)+"</b>");buttons(k)}
+function topics(){add("<b>Worüber möchtest du mit mir sprechen?</b> 🌰 Futter, 💩 Kaka & Pipi, 🏠 Wohnen, ❄️ Winter, 🐾 Körper, 🐣 Babys, 🦉 Gefahren oder 💧 Trinken?");buttons(null)}
+function topic(k){add("Erzähl mir etwas über "+D[k].n+".","user");setTimeout(()=>reply(k),80)}
+function special(s){
+let n=norm(s);
+
+/* Jahreszeiten – möglichst genau zur Frage */
+if(n.includes("fruhling")){
+ if(n.includes("ess")||n.includes("fress")||n.includes("futter")||n.includes("nahrung"))
+  return "Im <b>Frühling</b> fresse ich zum Beispiel Knospen. 🌱 Auch Vogeleier können auf meinem Speiseplan stehen.";
+ if(n.includes("baby")||n.includes("junge")||n.includes("paar"))
+  return "Im <b>Frühling</b> ist Paarungszeit. 🌱 Nach etwa <b>38 Tagen</b> kommen die Jungen zur Welt.";
+ return "Im <b>Frühling</b> suche ich einen Partner. 🌱 Nach etwa 38 Tagen können Junge zur Welt kommen.";
+}
+if(n.includes("sommer")){
+ if(n.includes("ess")||n.includes("fress")||n.includes("futter")||n.includes("nahrung"))
+  return "Im <b>Sommer</b> fresse ich zum Beispiel Waldbeeren, Himbeeren, Käfer und andere Insekten. ☀️";
+ return "Im <b>Sommer</b> werden die Jungen aufgezogen. ☀️ Manchmal bekommt ein Weibchen im Sommer noch einmal Junge.";
+}
+if(n.includes("herbst")){
+ if(n.includes("ess")||n.includes("fress")||n.includes("futter")||n.includes("nahrung"))
+  return "Im <b>Herbst</b> fresse ich Eicheln, Kastanien, Bucheckern, Nüsse, Samen und Pilze. 🍂";
+ return "Im <b>Herbst</b> sammle und verstecke ich Vorräte. 🍂 Außerdem bekomme ich Winterfell und polstere meinen Kobel.";
+}
+if(n.includes("winter")){
+ if(n.includes("ess")||n.includes("fress")||n.includes("futter")||n.includes("nahrung"))
+  return "Im <b>Winter</b> fresse ich von meinen versteckten Vorräten. 🌰 Dafür wache ich aus der Winterruhe auf.";
+ if(n.includes("schlaf")||n.includes("winterschlaf")||n.includes("winterruh"))
+  return "Ich halte <b>Winterruhe</b>. ❄️ Ich schlafe viel, wache aber zum Fressen auf.";
+ return "Im <b>Winter</b> halte ich Winterruhe. ❄️ Bei Hunger wache ich auf und suche meine Vorräte.";
+}
+
+/* Nachwuchs */
+if((n.includes("wie viel")||n.includes("wieviel")||n.includes("wie viele")||n.includes("anzahl")) &&
+   (n.includes("junge")||n.includes("baby")))
+ return "Ein Weibchen bekommt meist <b>2 bis 5 Junge</b>. 🐣";
+if((n.includes("wie oft")||n.includes("zweimal")) && (n.includes("junge")||n.includes("baby")))
+ return "Ein Weibchen kann <b>zweimal im Jahr</b> Junge bekommen. 🐣";
+if((n.includes("wie lang")||n.includes("wie lange")) && (n.includes("schwanger")||n.includes("trag")))
+ return "Das Weibchen ist etwa <b>38 Tage</b> trächtig. 🐣";
+if((n.includes("wann")||n.includes("alter")) && (n.includes("auge")||n.includes("augen")))
+ return "Nach etwa <b>4 Wochen</b> öffnen die Jungen ihre Augen. 👀";
+if((n.includes("wann")||n.includes("alter")) && (n.includes("nest")||n.includes("kobel")||n.includes("raus")))
+ return "Mit etwa <b>2 Monaten</b> verlassen die Jungen erstmals den Kobel. 🐿️";
+if((n.includes("wann")||n.includes("alter")) && (n.includes("selbst")||n.includes("mutter")||n.includes("allein")))
+ return "Mit etwa <b>3 bis 4 Monaten</b> sind die Jungen selbstständig. 🐿️";
+
+/* Futter / Trinken */
+if((n.includes("was")||n.includes("welch")) && (n.includes("ess")||n.includes("fress")))
+ return "Ich fresse je nach Jahreszeit anderes: 🌱 Knospen, ☀️ Beeren und Insekten, 🍂 Nüsse, Eicheln, Samen und Pilze.";
+if(n.includes("trink")||n.includes("durst"))
+ return "Ich trinke <b>Wasser</b>. 💧 Zum Beispiel aus Pfützen, Bächen oder Teichen.";
+
+/* Körper und Sinne */
+if((n.includes("warum")||n.includes("wozu"))&&n.includes("schwanz"))
+ return "Mein Schwanz hilft beim <b>Steuern und Balancieren</b>. 🐿️ Er kann mich auch wärmen.";
+if((n.includes("wie")||n.includes("wo"))&&(n.includes("kaka")||n.includes("kack")))
+ return "😄 Ich mache Kaka draußen. Mein Körper verdaut das Futter und scheidet den Rest wieder aus.";
+if((n.includes("hast du")||n.includes("haben"))&&(n.includes("zahn")||n.includes("zahne")))
+ return "Ja! 🦷 Meine <b>Nagezähne wachsen immer nach</b>.";
+if(n.includes("wie") && n.includes("nuss") && (n.includes("knack")||n.includes("auf")))
+ return "Ich nage zuerst ein <b>Loch in die Schale</b>. 🥜 Dann öffne ich sie mit meinen Nagezähnen.";
+if((n.includes("wie")||n.includes("wo")) && (n.includes("find")||n.includes("such")) && (n.includes("nuss")||n.includes("vorrat")||n.includes("futter")))
+ return "Mit meiner <b>guten Nase</b> finde ich verstecktes Futter. 👃 Sogar unter Schnee.";
+if((n.includes("wann")||n.includes("tag")||n.includes("nacht")) && (n.includes("wach")||n.includes("aktiv")))
+ return "Ich bin <b>tagaktiv</b>. ☀️ Am Tag suche ich Futter, abends gehe ich in meinen Kobel.";
+if((n.includes("allein")||n.includes("einzel")) && (n.includes("leb")||n.includes("wohn")||n.includes("bist")))
+ return "Meist bin ich ein <b>Einzelgänger</b>. 🐿️ Bei starker Kälte können mehrere Eichhörnchen einen Kobel teilen.";
+return null
+}
+function send(){let s=input.value.trim();if(!s)return;add(s,"user");input.value="";setTimeout(()=>{let sp=special(s);if(sp){add(sp);buttons(last);return}let k=detect(s);if(k){reply(k);return}let n=norm(s);
+if(["hallo","hi","hey"].some(x=>n.includes(x))){add("Hi! 🐿️ Schön, dass du da bist. <b>Was möchtest du über mich wissen?</b>");buttons(null);return}
+if(n.includes("danke")){add("Gerne! 🌰 Wir können noch weiter über Eichhörnchen reden.");buttons(last);return}
+if(last && n.split(" ").length<10){add("Ich glaube, du antwortest gerade auf unser Gespräch. 👍 "+pick(["Das ist ein interessanter Gedanke.","Gut mitgedacht!","Ah, ich verstehe, was du meinst."])+" Wir können bei diesem Eichhörnchen-Thema bleiben oder über etwas anderes am Eichhörnchen sprechen.");buttons(last);return}
+add("Das verstehe ich noch nicht. 🐿️<br>Schreib kurz: <b>Futter</b>, <b>Winter</b>, <b>Babys</b>, <b>Schwanz</b> oder <b>Kaka</b>.");buttons(null)},80)}
+topics.innerHTML=Object.keys(D).map(k=>'<button class="topic" onclick="topic(\''+k+'\')"><span>'+D[k].i+'</span>'+D[k].n+'</button>').join("");
+input.addEventListener("keydown",e=>{if(e.key==="Enter")send()});
+add("Hi! 🐿️ Ich bin <b>Eichi</b>.<br><b>Was willst du wissen?</b><br>Du kannst auch nur ein Wort schreiben.");buttons(null);
+</script></body></html>
